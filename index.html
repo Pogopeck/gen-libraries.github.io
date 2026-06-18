@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GenAI Engineering Reference Guide — ICPA Stack</title>
+<style>
+  :root {
+    --accent: #1f4e79;
+    --accent2: #2e75b6;
+    --code-bg: #f4f6f8;
+    --border: #e1e6ea;
+    --text: #1c1f23;
+    --muted: #5a6472;
+    --bg: #ffffff;
+    --sidebar-bg: #f7f9fb;
+    --tier1: #2e75b6;
+    --tier2: #c9882f;
+    --tier3: #a13d3d;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.6;
+  }
+  code, pre, .mono {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  }
+
+  /* ---------- Layout ---------- */
+  .layout {
+    display: flex;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  nav.sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--border);
+    padding: 24px 16px 60px;
+  }
+  nav.sidebar a {
+    display: block;
+    color: var(--text);
+    text-decoration: none;
+    padding: 7px 10px;
+    border-radius: 6px;
+    font-size: 14px;
+    margin-bottom: 2px;
+  }
+  nav.sidebar a:hover { background: #e9eef2; }
+  nav.sidebar .nav-title {
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    margin: 18px 0 6px 10px;
+  }
+  nav.sidebar .nav-title:first-child { margin-top: 0; }
+  nav.sidebar a.lib-link { font-weight: 600; padding-left: 10px; }
+
+  main {
+    flex: 1;
+    min-width: 0;
+    padding: 0 56px 80px;
+  }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    padding: 64px 0 36px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 40px;
+  }
+  .hero h1 {
+    font-size: 38px;
+    margin: 0 0 10px;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+  }
+  .hero .subtitle {
+    font-size: 17px;
+    color: var(--muted);
+    font-style: italic;
+    margin-bottom: 22px;
+  }
+  .hero p { max-width: 800px; color: #333; }
+  .pill-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+  .pill {
+    background: #eaf1f8;
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 999px;
+  }
+
+  /* ---------- Section headings ---------- */
+  section.library { padding-top: 30px; margin-bottom: 10px; }
+  h2.lib-title {
+    font-size: 30px;
+    color: var(--accent);
+    margin: 0 0 4px;
+    scroll-margin-top: 20px;
+    border-bottom: 3px solid var(--accent2);
+    padding-bottom: 10px;
+  }
+  .used-for {
+    color: var(--muted);
+    font-style: italic;
+    font-size: 16px;
+    margin: 14px 0 18px;
+  }
+  h3 {
+    font-size: 21px;
+    color: var(--accent);
+    margin: 34px 0 14px;
+    scroll-margin-top: 20px;
+  }
+  h4 {
+    font-size: 16.5px;
+    color: #2b2b2b;
+    margin: 26px 0 10px;
+  }
+  p { margin: 0 0 14px; }
+
+  /* ---------- Reference table ---------- */
+  table.ref {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0 24px;
+    font-size: 14.5px;
+  }
+  table.ref th {
+    background: var(--accent);
+    color: #fff;
+    text-align: left;
+    padding: 9px 14px;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  table.ref td {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  table.ref tr:nth-child(even) td { background: var(--sidebar-bg); }
+  table.ref td.fn { white-space: nowrap; font-weight: 600; color: var(--accent2); }
+  table.ref td.fn code { background: none; padding: 0; color: inherit; }
+
+  /* ---------- Code blocks ---------- */
+  pre {
+    background: #0d1117;
+    color: #e6edf3;
+    padding: 18px 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 13.5px;
+    line-height: 1.55;
+    margin: 0 0 22px;
+    border: 1px solid #21262d;
+  }
+  pre code { background: none; padding: 0; color: inherit; }
+  .code-label {
+    font-size: 12.5px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+
+  /* simple syntax highlight spans */
+  .tok-kw { color: #ff7b72; }
+  .tok-str { color: #a5d6ff; }
+  .tok-com { color: #8b949e; font-style: italic; }
+  .tok-fn { color: #d2a8ff; }
+  .tok-num { color: #79c0ff; }
+
+  /* ---------- Lists / callouts ---------- */
+  ul.notes { margin: 0 0 20px; padding-left: 22px; }
+  ul.notes li { margin-bottom: 9px; }
+
+  .callout {
+    background: var(--sidebar-bg);
+    border-left: 4px solid var(--accent2);
+    padding: 14px 18px;
+    border-radius: 0 6px 6px 0;
+    margin: 0 0 22px;
+    font-size: 15px;
+  }
+  .callout strong { color: var(--accent); }
+
+  /* ---------- Tier badges ---------- */
+  .tier-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 9px;
+    border-radius: 999px;
+    color: #fff;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  .tier-1 { background: var(--tier1); }
+  .tier-2 { background: var(--tier2); }
+  .tier-3 { background: var(--tier3); }
+
+  hr.lib-sep {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 56px 0 0;
+  }
+
+  footer {
+    margin-top: 70px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 13.5px;
+  }
+
+  /* Back to top */
+  #top-link {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--accent);
+    color: #fff;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    opacity: 0.85;
+  }
+  #top-link:hover { opacity: 1; }
+
+  /* ---------- Mobile ---------- */
+  .sidebar-toggle { display: none; }
+  @media (max-width: 980px) {
+    nav.sidebar {
+      position: fixed;
+      left: 0; top: 0;
+      transform: translateX(-100%);
+      transition: transform 0.2s ease;
+      z-index: 50;
+      width: 78vw;
+      max-width: 300px;
+    }
+    nav.sidebar.open { transform: translateX(0); }
+    .sidebar-toggle {
+      display: block;
+      position: fixed;
+      top: 14px; left: 14px;
+      z-index: 60;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      width: 40px; height: 40px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+    main { padding: 70px 20px 60px; }
+    .hero h1 { font-size: 28px; }
+    table.ref { font-size: 13px; }
+    pre { font-size: 12.5px; padding: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<button class="sidebar-toggle" onclick="document.querySelector('nav.sidebar').classList.toggle('open')">☰</button>
+
+<div class="layout">
+
+<nav class="sidebar">
+  <div class="nav-title">Overview</div>
+  <a href="#top">Introduction</a>
+
+  <div class="nav-title">GenAI Libraries</div>
+  <a class="lib-link" href="#openai">1. OpenAI SDK</a>
+  <a class="lib-link" href="#langchain">2. LangChain</a>
+  <a class="lib-link" href="#langgraph">3. LangGraph</a>
+  <a class="lib-link" href="#fastapi">4. FastAPI</a>
+  <a class="lib-link" href="#chromadb">5. ChromaDB</a>
+  <a class="lib-link" href="#llamaindex">6. LlamaIndex</a>
+  <a class="lib-link" href="#transformers">7. Transformers</a>
+  <a class="lib-link" href="#peft">8. PEFT</a>
+
+  <div class="nav-title">Closing</div>
+  <a href="#wrap-up">How it all fits — ICPA map</a>
+</nav>
+
+<main id="top">
+
+  <div class="hero">
+    <h1>GenAI Engineering Reference Guide</h1>
+    <div class="subtitle">OpenAI SDK · LangChain · LangGraph · FastAPI · ChromaDB · LlamaIndex · Transformers · PEFT</div>
+    <p>
+      This guide maps every function and parameter from eight library cheat-sheets back to a real production system:
+      <strong>ICPA</strong> (Insurance Claims Processing Automation), a three-tier LangGraph pipeline processing
+      roughly 50,000 German insurance emails a day at Vodafone. Tier 1 is a TF-IDF fast path handling about
+      60% of traffic, Tier 2 is ChromaDB-backed RAG with semantic caching, and Tier 3 is an LLM fallback for the
+      hard cases. RAGAS faithfulness moved from 72% to 91% through MMR retrieval, metadata filtering, and tighter
+      prompt grounding; LLM escalation dropped from 40% to 12%; the Redis semantic cache held an ~85% hit rate.
+    </p>
+    <p>
+      Each section covers what the library is for, every function/parameter from the source sheet with a
+      one-line explanation, a worked code sample wired to ICPA-style data, and notes on where it shows up in
+      interview narratives or the Go/GCP transition at SanDisk.
+    </p>
+    <div class="pill-row">
+      <span class="pill">LangGraph orchestration</span>
+      <span class="pill">RAG (ChromaDB + LlamaIndex)</span>
+      <span class="pill">FastAPI serving</span>
+      <span class="pill">PEFT / LoRA fine-tuning</span>
+      <span class="pill">Go transition notes</span>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 1. OPENAI SDK -->
+  <!-- ============================================================ -->
+  <section class="library" id="openai">
+    <h2 class="lib-title">1. OpenAI SDK</h2>
+    <p class="used-for">Used for: accessing GPT models, embeddings, image generation, tool calling, and structured outputs.</p>
+
+    <p>In ICPA, the OpenAI SDK call pattern (or its Ollama-compatible equivalent) is what
+      <span class="tier-badge tier-3">TIER 3</span> falls back to when Tier 1's TF-IDF path and Tier 2's RAG path
+      both fail to produce a confident answer — that's the ~12% of traffic that reaches an LLM at all after
+      optimization. The shape of every call below is identical whether you're hitting OpenAI's hosted API or a
+      local <code>llama3.2</code> server through an OpenAI-compatible client, which is why this SDK is worth
+      knowing cold: it's the lingua franca every other framework (LangChain, LlamaIndex) wraps.</p>
+
+    <h3>Function &amp; parameter reference</h3>
+    <table class="ref">
+      <tr><th>Function / Param</th><th>What it does</th></tr>
+      <tr><td class="fn">OpenAI()</td><td>Instantiates the API client; reads <code>OPENAI_API_KEY</code> from env by default, or accepts it explicitly.</td></tr>
+      <tr><td class="fn">chat.completions.create()</td><td>The classic chat endpoint — send a list of role-tagged messages, get one completion back.</td></tr>
+      <tr><td class="fn">responses.create()</td><td>OpenAI's newer unified endpoint merging chat, tools, and structured output into one call shape.</td></tr>
+      <tr><td class="fn">embeddings.create()</td><td>Turns text into a dense vector; this is what feeds your ChromaDB collections.</td></tr>
+      <tr><td class="fn">images.generate()</td><td>Text-to-image generation (DALL·E family) — not used in ICPA, common in multimodal demos.</td></tr>
+      <tr><td class="fn">audio.transcriptions.create()</td><td>Speech-to-text (Whisper) — relevant if claims ever arrive as voicemail/call transcripts.</td></tr>
+      <tr><td class="fn">audio.speech.create()</td><td>Text-to-speech — the inverse of transcription.</td></tr>
+      <tr><td class="fn">stream=True</td><td>Switches the response to a token-by-token generator instead of one blocking return.</td></tr>
+      <tr><td class="fn">tools=[]</td><td>Declares callable functions the model can choose to invoke (JSON-schema described).</td></tr>
+      <tr><td class="fn">tool_choice="auto"</td><td>Lets the model decide whether to call a tool, force one, or force none.</td></tr>
+      <tr><td class="fn">response_format={}</td><td>Forces output into a JSON schema or Pydantic-derived schema instead of free text.</td></tr>
+      <tr><td class="fn">max_tokens</td><td>Hard cap on output length — important for cost control on a 50k-emails/day pipeline.</td></tr>
+      <tr><td class="fn">temperature</td><td>Controls sampling randomness; 0 for deterministic claims classification, higher for drafting.</td></tr>
+      <tr><td class="fn">top_p</td><td>Nucleus sampling — alternative/complement to temperature for controlling diversity.</td></tr>
+      <tr><td class="fn">messages=[]</td><td>The conversation array of {role, content} dicts that the model conditions on.</td></tr>
+      <tr><td class="fn">usage</td><td>Token accounting object on the response — what you'd log for per-tenant cost tracking.</td></tr>
+    </table>
+
+    <h4>Worked example — Tier 3 fallback classification with structured output</h4>
+    <p>This mirrors the actual escalation path: a claim email that TF-IDF and RAG couldn't confidently classify
+      gets one structured call, with temperature pinned to 0 and a JSON schema so the output is parseable
+      without a fragile regex.</p>
+    <div class="code-label">python</div>
+    <pre><code><span class="tok-kw">from</span> openai <span class="tok-kw">import</span> OpenAI
+<span class="tok-kw">from</span> pydantic <span class="tok-kw">import</span> BaseModel
+
+client = OpenAI()  <span class="tok-com"># reads OPENAI_API_KEY, or point base_url at Ollama</span>
+
+<span class="tok-kw">class</span> <span class="tok-fn">ClaimDecision</span>(BaseModel):
+    category: <span class="tok-fn">str</span>          <span class="tok-com"># e.g. 'auto_collision', 'health_reimbursement'</span>
+    confidence: <span class="tok-fn">float</span>
+    requires_human_review: <span class="tok-fn">bool</span>
+    reasoning: <span class="tok-fn">str</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">classify_claim_tier3</span>(email_text: <span class="tok-fn">str</span>, retrieved_context: <span class="tok-fn">str</span>) -&gt; ClaimDecision:
+    response = client.chat.completions.create(
+        model=<span class="tok-str">"gpt-4o-mini"</span>,
+        temperature=<span class="tok-num">0</span>,                <span class="tok-com"># deterministic — classification, not creative writing</span>
+        max_tokens=<span class="tok-num">300</span>,
+        response_format={<span class="tok-str">"type"</span>: <span class="tok-str">"json_schema"</span>,
+                          <span class="tok-str">"json_schema"</span>: {<span class="tok-str">"name"</span>: <span class="tok-str">"claim_decision"</span>,
+                                          <span class="tok-str">"schema"</span>: ClaimDecision.model_json_schema()}},
+        messages=[
+            {<span class="tok-str">"role"</span>: <span class="tok-str">"system"</span>, <span class="tok-str">"content"</span>: <span class="tok-str">"You triage German insurance claim emails."</span>},
+            {<span class="tok-str">"role"</span>: <span class="tok-str">"user"</span>, <span class="tok-str">"content"</span>: <span class="tok-kw">f</span><span class="tok-str">"Context:\n{retrieved_context}\n\nEmail:\n{email_text}"</span>},
+        ],
+    )
+    raw = response.choices[<span class="tok-num">0</span>].message.content
+    <span class="tok-fn">print</span>(response.usage)          <span class="tok-com"># token accounting -> per-tenant cost logging</span>
+    <span class="tok-kw">return</span> ClaimDecision.model_validate_json(raw)</code></pre>
+
+    <h4>Streaming variant (any user-facing chat surface)</h4>
+    <pre><code>stream = client.chat.completions.create(
+    model=<span class="tok-str">"gpt-4o-mini"</span>,
+    stream=<span class="tok-kw">True</span>,
+    messages=[{<span class="tok-str">"role"</span>: <span class="tok-str">"user"</span>, <span class="tok-str">"content"</span>: <span class="tok-str">"Summarize this claim's status in plain German."</span>}],
+)
+<span class="tok-kw">for</span> chunk <span class="tok-kw">in</span> stream:
+    delta = chunk.choices[<span class="tok-num">0</span>].delta.content
+    <span class="tok-kw">if</span> delta:
+        <span class="tok-fn">print</span>(delta, end=<span class="tok-str">""</span>, flush=<span class="tok-kw">True</span>)</code></pre>
+
+    <h4>Embeddings — the bridge into ChromaDB</h4>
+    <pre><code>emb = client.embeddings.create(
+    model=<span class="tok-str">"text-embedding-3-small"</span>,
+    input=[<span class="tok-str">"Schadenmeldung: Glasbruch am 14.03."</span>],
+)
+vector = emb.data[<span class="tok-num">0</span>].embedding   <span class="tok-com"># this is what .add() in ChromaDB stores</span></code></pre>
+
+    <div class="callout">
+      <strong>Interview / transition notes</strong>
+      <ul class="notes">
+        <li>You actually used Cohere multilingual embeddings in production, not OpenAI's — be ready to explain why (German-language coverage, cost) if asked to compare to <code>embeddings.create()</code>.</li>
+        <li><code>response_format</code> with a Pydantic-derived schema is the cleanest answer to "how do you guarantee structured output from an LLM" — better than prompting nicely and regexing the response.</li>
+        <li>In Go at SanDisk, <code>tool_choice</code>/<code>response_format</code> map to typed structs you unmarshal into; the schema-first discipline carries over even though the SDK syntax doesn't.</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="lib-sep">
+
+  <!-- ============================================================ -->
+  <!-- 2. LANGCHAIN -->
+  <!-- ============================================================ -->
+  <section class="library" id="langchain">
+    <h2 class="lib-title">2. LangChain</h2>
+    <p class="used-for">Used for: building LLM applications, RAG pipelines, prompts, chains, and agents.</p>
+
+    <p>LangChain sits below LangGraph in the stack — LangGraph orchestrates the overall agent loop, but the
+      individual nodes inside that graph (the retrieval step, the prompt-building step, the LLM call) are
+      frequently LangChain Runnables under the hood. The LCEL pipe operator (<code>|</code>) is worth being
+      fluent in, since it's the cleanest way to describe "retrieve, then stuff into prompt, then call model,
+      then parse" in a single composable expression — exactly what
+      <span class="tier-badge tier-2">TIER 2</span> RAG does before LangGraph hands control to it.</p>
+
+    <h3>Function &amp; parameter reference</h3>
+    <table class="ref">
+      <tr><th>Function / Param</th><th>What it does</th></tr>
+      <tr><td class="fn">ChatOpenAI()</td><td>LangChain wrapper around an OpenAI chat model — same params as the raw SDK, Runnable-compatible.</td></tr>
+      <tr><td class="fn">ChatAnthropic()</td><td>Same idea, pointed at Claude — useful when comparing provider behavior side by side.</td></tr>
+      <tr><td class="fn">ChatPromptTemplate()</td><td>Builds a multi-turn prompt from role-tagged template strings with variable slots.</td></tr>
+      <tr><td class="fn">MessagesPlaceholder()</td><td>Reserves a slot inside a ChatPromptTemplate for injected conversation history.</td></tr>
+      <tr><td class="fn">PromptTemplate()</td><td>Single-string template version (no roles) — for completion-style or simpler prompts.</td></tr>
+      <tr><td class="fn">RunnableLambda()</td><td>Wraps an arbitrary Python function so it can be composed with <code>|</code> into a chain.</td></tr>
+      <tr><td class="fn">RunnableParallel()</td><td>Runs multiple Runnables concurrently on the same input and merges results into a dict.</td></tr>
+      <tr><td class="fn">RunnablePassthrough()</td><td>Forwards the input unchanged — keeps the original question alongside retrieved context.</td></tr>
+      <tr><td class="fn">RunnableBranch()</td><td>Conditional routing between Runnables based on a predicate — an early version of LangGraph branching.</td></tr>
+      <tr><td class="fn">RunnableWithMessageHistory()</td><td>Wraps a chain so it auto-loads/saves conversation history per session id.</td></tr>
+      <tr><td class="fn">StrOutputParser()</td><td>Extracts the plain string content out of a model response object.</td></tr>
+      <tr><td class="fn">PydanticOutputParser()</td><td>Parses model output directly into a Pydantic model instance.</td></tr>
+      <tr><td class="fn">with_structured_output()</td><td>Newer, cleaner way to bind a schema to a chat model so it returns typed objects directly.</td></tr>
+      <tr><td class="fn">RecursiveCharacterTextSplitter()</td><td>Chunks long documents on a hierarchy of separators (paragraph, then sentence, then char).</td></tr>
+      <tr><td class="fn">Document()</td><td>LangChain's container for a chunk of text plus metadata — the unit retrievers operate on.</td></tr>
+      <tr><td class="fn">create_retrieval_chain()</td><td>Wires a retriever and a doc-combining chain together into a full RAG pipeline.</td></tr>
+      <tr><td class="fn">create_stuff_documents_chain()</td><td>Concatenates ("stuffs") retrieved documents into the prompt context for the LLM.</td></tr>
+      <tr><td class="fn">Chroma()</td><td>LangChain's vector store wrapper over ChromaDB.</td></tr>
+      <tr><td class="fn">.invoke()</td><td>Runs a Runnable/chain once on a single input, synchronously.</td></tr>
+      <tr><td class="fn">.stream()</td><td>Runs a Runnable and yields output incrementally instead of all at once.</td></tr>
+    </table>
+
+    <h4>Worked example — LCEL retrieval chain feeding Tier 2</h4>
+    <p>The chain form of what ICPA's Tier 2 does: hybrid retrieval result gets stuffed into a grounded prompt,
+      the model answers, and the parser strips it down to plain text before returning up to the LangGraph node
+      that called it.</p>
+    <pre><code><span class="tok-kw">from</span> langchain_openai <span class="tok-kw">import</span> ChatOpenAI
+<span class="tok-kw">from</span> langchain_core.prompts <span class="tok-kw">import</span> ChatPromptTemplate, MessagesPlaceholder
+<span class="tok-kw">from</span> langchain_core.output_parsers <span class="tok-kw">import</span> StrOutputParser
+<span class="tok-kw">from</span> langchain_core.runnables <span class="tok-kw">import</span> RunnablePassthrough, RunnableParallel
+
+llm = ChatOpenAI(model=<span class="tok-str">"gpt-4o-mini"</span>, temperature=<span class="tok-num">0</span>)
+
+prompt = ChatPromptTemplate.from_messages([
+    (<span class="tok-str">"system"</span>, <span class="tok-str">"Answer using ONLY the provided claim context. German insurance domain."</span>),
+    MessagesPlaceholder(<span class="tok-str">"chat_history"</span>, optional=<span class="tok-kw">True</span>),
+    (<span class="tok-str">"human"</span>, <span class="tok-str">"Context:\n{context}\n\nQuestion:\n{question}"</span>),
+])
+
+<span class="tok-kw">def</span> <span class="tok-fn">format_docs</span>(docs):
+    <span class="tok-kw">return</span> <span class="tok-str">"\n\n"</span>.join(d.page_content <span class="tok-kw">for</span> d <span class="tok-kw">in</span> docs)
+
+rag_chain = (
+    RunnableParallel(
+        context=retriever | format_docs,   <span class="tok-com"># hybrid BM25+dense retriever</span>
+        question=RunnablePassthrough(),
+    )
+    | prompt
+    | llm
+    | StrOutputParser()
+)
+
+answer = rag_chain.invoke(<span class="tok-str">"Welche Unterlagen fehlen fuer Schadensfall #4471?"</span>)</code></pre>
+
+    <h4>Structured output for downstream routing</h4>
+    <pre><code><span class="tok-kw">from</span> pydantic <span class="tok-kw">import</span> BaseModel
+
+<span class="tok-kw">class</span> <span class="tok-fn">EscalationCheck</span>(BaseModel):
+    needs_llm_fallback: <span class="tok-fn">bool</span>
+    missing_fields: list[<span class="tok-fn">str</span>]
+
+structured_llm = llm.with_structured_output(EscalationCheck)
+result = structured_llm.invoke(<span class="tok-str">"Does this claim have all required fields? ..."</span>)
+<span class="tok-kw">if</span> result.needs_llm_fallback:
+    route_to_tier3(claim)</code></pre>
+
+    <h4>Chunking documents before they hit ChromaDB</h4>
+    <pre><code><span class="tok-kw">from</span> langchain_text_splitters <span class="tok-kw">import</span> RecursiveCharacterTextSplitter
+
+splitter = RecursiveCharacterTextSplitter(chunk_size=<span class="tok-num">500</span>, chunk_overlap=<span class="tok-num">50</span>)
+chunks = splitter.split_documents(policy_documents)  <span class="tok-com"># list[Document] -> smaller list[Document]</span></code></pre>
+
+    <div class="callout">
+      <strong>Interview / transition notes</strong>
+      <ul class="notes">
+        <li>Be precise about LangChain vs. LangGraph: LangChain composes a single linear-ish pipeline; LangGraph adds state, cycles, and conditional branching. ICPA needed LangGraph because Tier 1 → 2 → 3 is a conditional, stateful escalation path, not a fixed chain.</li>
+        <li><code>with_structured_output()</code> and <code>PydanticOutputParser()</code> solve the same problem two ways — know that the former is preferred now since it uses native tool-calling rather than prompting for parseable text.</li>
+        <li><code>RunnableParallel</code> is the direct analog of Go's goroutines + <code>sync.WaitGroup</code> fan-out/fan-in pattern — a useful bridge when explaining concurrency to a Go-focused interviewer.</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="lib-sep">
+
+</main>
+</div>
+
+<a href="#top" id="top-link">↑</a>
+
+</body>
+</html>
